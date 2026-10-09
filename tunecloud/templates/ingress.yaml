@@ -16,6 +16,13 @@ spec:
             name: tunecloud-server
             port:
               number: 4000
+      - path: /rest
+        pathType: Prefix
+        backend:
+          service:
+            name: tunecloud-server
+            port:
+              number: 4000
       - path: /
         pathType: Prefix
         backend:
