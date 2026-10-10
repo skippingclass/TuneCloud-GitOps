@@ -7,8 +7,10 @@ data:
     CREATE TABLE IF NOT EXISTS artists (
       id SERIAL PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
+      musicbrainz_id TEXT,
       created_at TIMESTAMP DEFAULT NOW()
     );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_artists_mbid ON artists(musicbrainz_id) WHERE musicbrainz_id IS NOT NULL;
 
     CREATE TABLE IF NOT EXISTS albums (
       id SERIAL PRIMARY KEY,
@@ -17,9 +19,15 @@ data:
       year INTEGER,
       genre TEXT,
       cover_path TEXT,
+      folder_path TEXT,
+      musicbrainz_id TEXT,
+      compilation BOOLEAN DEFAULT false,
+      disc_count INTEGER DEFAULT 1,
       created_at TIMESTAMP DEFAULT NOW(),
       UNIQUE(title, artist_id)
     );
+    CREATE UNIQUE INDEX IF NOT EXISTS idx_albums_mbid ON albums(musicbrainz_id) WHERE musicbrainz_id IS NOT NULL;
+    CREATE INDEX IF NOT EXISTS idx_albums_folder_path ON albums(folder_path);
 
     CREATE TABLE IF NOT EXISTS tracks (
       id SERIAL PRIMARY KEY,
@@ -38,6 +46,9 @@ data:
       sample_rate INTEGER,
       format TEXT,
       cover_path TEXT,
+      composer TEXT,
+      track_artist_credit TEXT,
+      mtime TIMESTAMPTZ,
       created_at TIMESTAMP DEFAULT NOW(),
       updated_at TIMESTAMP DEFAULT NOW()
     );
@@ -46,12 +57,55 @@ data:
     CREATE INDEX IF NOT EXISTS idx_tracks_album_id ON tracks(album_id);
     CREATE INDEX IF NOT EXISTS idx_tracks_file_path ON tracks(file_path);
     CREATE INDEX IF NOT EXISTS idx_tracks_title ON tracks(title);
-
+    CREATE INDEX IF NOT EXISTS idx_tracks_mtime ON tracks(mtime);
 
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
       username TEXT NOT NULL UNIQUE,
       password_hash TEXT NOT NULL,
       is_admin BOOLEAN DEFAULT false,
+      subsonic_secret TEXT,
       created_at TIMESTAMP DEFAULT NOW()
     );
+
+    CREATE TABLE IF NOT EXISTS genres (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL UNIQUE
+    );
+
+    CREATE TABLE IF NOT EXISTS track_genres (
+      track_id INTEGER REFERENCES tracks(id) ON DELETE CASCADE,
+      genre_id INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+      PRIMARY KEY (track_id, genre_id)
+    );
+    CREATE INDEX IF NOT EXISTS idx_track_genres_genre_id ON track_genres(genre_id);
+
+    CREATE TABLE IF NOT EXISTS album_credits (
+      album_id INTEGER REFERENCES albums(id) ON DELETE CASCADE,
+      artist_id INTEGER REFERENCES artists(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'albumartist',
+      credited_as TEXT,
+      PRIMARY KEY (album_id, artist_id, role)
+    );
+    CREATE INDEX IF NOT EXISTS idx_album_credits_artist ON album_credits(artist_id, role);
+
+    CREATE TABLE IF NOT EXISTS track_credits (
+      track_id INTEGER REFERENCES tracks(id) ON DELETE CASCADE,
+      artist_id INTEGER REFERENCES artists(id) ON DELETE CASCADE,
+      role TEXT NOT NULL DEFAULT 'artist',
+      credited_as TEXT,
+      PRIMARY KEY (track_id, artist_id, role)
+    );
+    CREATE INDEX IF NOT EXISTS idx_track_credits_artist ON track_credits(artist_id, role);
+
+    -- Фиксируем уже применённые миграции, чтобы runner на свежей базе не пытался накатить их поверх
+    CREATE TABLE IF NOT EXISTS schema_migrations (
+      version TEXT PRIMARY KEY,
+      applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    INSERT INTO schema_migrations (version) VALUES
+      ('001_initial.sql'),
+      ('002_track_mtime.sql'),
+      ('003_metadata_credits_and_genres.sql')
+    ON CONFLICT (version) DO NOTHING;
