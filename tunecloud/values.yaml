@@ -2,8 +2,8 @@ global:
   domain: tunecloud.local
   grafanaDomain: grafana.tunecloud.local
 server:
-  image: ghcr.io/skippingclass/tunecloud-server:sha-a380ba6
+  image: ghcr.io/skippingclass/tunecloud-server:sha-b3b6def
   replicas: 1
 client:
-  image: ghcr.io/skippingclass/tunecloud-client:sha-a380ba6
+  image: ghcr.io/skippingclass/tunecloud-client:sha-b3b6def
   replicas: 1
