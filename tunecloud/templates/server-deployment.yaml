@@ -29,6 +29,8 @@ spec:
             - secretRef:
                 name: postgres-secrets
           env:
+            - name: LRC_RED_CONTACT_EMAIL
+              value: {{ .Values.server.lrcRedContactEmail | default "" | quote }}
             - name: DATABASE_URL
               value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@tunecloud-db:5432/$(POSTGRES_DB)"
             - name: MUSIC_DIR

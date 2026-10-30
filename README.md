@@ -168,6 +168,12 @@ helm install tunecloud ./tunecloud \
 kubectl get pods -n tunecloud
 ```
 
+The contact sent to lrc.red is configured per deployment with
+`server.lrcRedContactEmail` in `tunecloud/values.yaml`. Set it to the operator's
+email address. An empty value disables new lrc.red requests; the other lyrics
+sources remain available. This chart passes it to the server as
+`LRC_RED_CONTACT_EMAIL`.
+
 To update an existing installation:
 
 ```bash

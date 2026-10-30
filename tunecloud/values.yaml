@@ -4,6 +4,8 @@ global:
 server:
   image: ghcr.io/skippingclass/tunecloud-server:sha-06a4b3e
   replicas: 1
+  # Contact for this deployment; not a default in the application image.
+  lrcRedContactEmail: itzmeowzer@gmail.com
 client:
   image: ghcr.io/skippingclass/tunecloud-client:sha-06a4b3e
   replicas: 1
