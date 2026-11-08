@@ -2,10 +2,10 @@ global:
   domain: tunecloud.local
   grafanaDomain: grafana.tunecloud.local
 server:
-  image: ghcr.io/skippingclass/tunecloud-server:sha-62545ce
+  image: ghcr.io/skippingclass/tunecloud-server:sha-f90f67e
   replicas: 1
   # Contact for this deployment; not a default in the application image.
   lrcRedContactEmail: itzmeowzer@gmail.com
 client:
-  image: ghcr.io/skippingclass/tunecloud-client:sha-62545ce
+  image: ghcr.io/skippingclass/tunecloud-client:sha-f90f67e
   replicas: 1
