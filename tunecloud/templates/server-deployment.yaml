@@ -34,7 +34,9 @@ spec:
             - name: DATABASE_URL
               value: "postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@tunecloud-db:5432/$(POSTGRES_DB)"
             - name: MUSIC_DIR
-              value: "/music"                
+              value: "/music"
+            - name: TAG_EDITING_ENABLED
+              value: "true"
           ports:
             - containerPort: 4000
           volumeMounts:
