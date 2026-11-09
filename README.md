@@ -20,6 +20,13 @@ It contains:
 
 Application source code is maintained separately in the [TuneCloud repository](https://github.com/egorpirkov/TuneCloud).
 
+The server's public address is configured through `server.publicUrl` and rendered
+as `PUBLIC_URL` in its Deployment. Optional Last.fm credentials are managed directly
+in the cluster in the `tunecloud/lastfm-secret` Secret with keys `LASTFM_API_KEY`,
+`LASTFM_API_SECRET`, and `LASTFM_ENCRYPTION_KEY`; their values must not be committed
+to this repository. Keep the encryption key stable and back it up with the database.
+The Secret is optional so installations without Last.fm can still start normally.
+
 ---
 
 ## 📁 Repository Structure

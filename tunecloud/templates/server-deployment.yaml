@@ -28,7 +28,12 @@ spec:
                 name: admin
             - secretRef:
                 name: postgres-secrets
+            - secretRef:
+                name: lastfm-secret
+                optional: true
           env:
+            - name: PUBLIC_URL
+              value: {{ .Values.server.publicUrl | default "" | quote }}
             - name: LRC_RED_CONTACT_EMAIL
               value: {{ .Values.server.lrcRedContactEmail | default "" | quote }}
             - name: DATABASE_URL

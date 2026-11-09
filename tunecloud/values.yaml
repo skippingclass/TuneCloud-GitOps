@@ -4,6 +4,7 @@ global:
 server:
   image: ghcr.io/skippingclass/tunecloud-server:sha-f90f67e
   replicas: 1
+  publicUrl: https://tune.realgeek.ru
   # Contact for this deployment; not a default in the application image.
   lrcRedContactEmail: itzmeowzer@gmail.com
 client:
