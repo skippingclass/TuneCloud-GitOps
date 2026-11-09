@@ -2,11 +2,11 @@ global:
   domain: tunecloud.local
   grafanaDomain: grafana.tunecloud.local
 server:
-  image: ghcr.io/skippingclass/tunecloud-server:sha-a30e3d9
+  image: ghcr.io/skippingclass/tunecloud-server:sha-cfa61f6
   replicas: 1
   publicUrl: https://tune.realgeek.ru
   # Contact for this deployment; not a default in the application image.
   lrcRedContactEmail: itzmeowzer@gmail.com
 client:
-  image: ghcr.io/skippingclass/tunecloud-client:sha-a30e3d9
+  image: ghcr.io/skippingclass/tunecloud-client:sha-cfa61f6
   replicas: 1
