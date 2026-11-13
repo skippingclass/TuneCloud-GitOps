@@ -4,6 +4,8 @@ metadata:
   name: tunecloud-server
 spec:
   replicas: {{ .Values.server.replicas }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: tunecloud-server
@@ -12,6 +14,7 @@ spec:
       labels:
         app: tunecloud-server
     spec:
+      terminationGracePeriodSeconds: 30
       securityContext:
         fsGroup: 1000
       imagePullSecrets:
@@ -19,6 +22,14 @@ spec:
       containers:
         - name: tunecloud-server
           image: {{ .Values.server.image }}
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           envFrom:
             - secretRef:
                 name: spotify-secret
@@ -42,8 +53,24 @@ spec:
               value: "/music"
             - name: TAG_EDITING_ENABLED
               value: "true"
+            - name: TRUSTED_PROXIES
+              value: "uniquelocal"
           ports:
             - containerPort: 4000
+          readinessProbe:
+            httpGet:
+              path: /api/ready
+              port: 4000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 4000
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            failureThreshold: 3
           volumeMounts:
             - name: covers-storage
               mountPath: /app/covers
